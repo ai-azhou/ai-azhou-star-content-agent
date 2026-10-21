@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "skill_version": "2026-10-21-v2",
+  "data_dir": "",
+  "timezone": "",
+  "setup": { "next_step": 1, "decisions": "" },
+  "capabilities": { "run_commands": null, "see_images": null, "local_schedule": null, "unattended": null },
+  "platforms": {
+    "xhs": {
+      "enabled": false, "fav_url": "", "account": "", "status": "",
+      "order_verified": false,
+      "scan": { "seen": 0, "complete": false, "scanned_at": "" },
+      "backfill_cursor": 0, "blocked_runs": 0, "redesign_fail_days": 0
+    },
+    "douyin": {
+      "enabled": false, "experimental": true, "fav_url": "", "account": "", "status": "",
+      "order_verified": false,
+      "scan": { "seen": 0, "complete": false, "scanned_at": "" },
+      "backfill_cursor": 0, "blocked_runs": 0, "redesign_fail_days": 0
+    }
+  },
+  "prefs": {
+    "depth": "",
+    "image_cap": 6, "frame_cap": 6, "deep_cap": 12,
+    "scope": { "mode": "", "filter": "" },
+    "daily_new": 20, "daily_old": 0,
+    "push_time": "",
+    "delivery": { "method": "", "target": "" },
+    "personal_topics": []
+  },
+  "schedule": { "method": "", "id": "", "command": "", "verified_at": "" },
+  "paused_until": "",
+  "last_run": { "run_id": "", "date": "", "result": "" },
+  "last_delivery": { "date": "", "file": "" }
+}
