@@ -4,7 +4,7 @@ description: 收藏助手。只读、低频地读用户在小红书网页版（�
 license: MIT
 ---
 
-# 收藏助手 · v2.1（2026-10-21）
+# 收藏助手 · v2.2（2026-10-21）
 
 帮用户做两件事：
 1. 读懂用户在小红书（抖音为实验性）网页版里的收藏，存成本地收藏库；
@@ -42,6 +42,7 @@ license: MIT
 | state.json 里 `setup.next_step` 不是 `done`，用户在对话里 | `setup.md`，从 `next_step` 接着做 |
 | `setup.next_step` 不是 `done`，定时任务触发 | 不进设置流程：按 `daily-run.md`「没人在看时」留一句话，然后结束 |
 | 定时任务到点，或用户说「今天的 3 条」 | `daily-run.md` |
+| 要翻收藏列表（摸清、拉新收藏、刷新链接） | `read-list.md` |
 | 要打开并读一条收藏 | `read-one.md` |
 | 要建库、写库、改库 | `library.md` |
 | 要挑选 | `pick.md` |

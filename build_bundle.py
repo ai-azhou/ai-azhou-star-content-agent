@@ -8,8 +8,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 # 仓库里是规范布局 skills/star-content-agent/，发布目录里是 star-content-agent/
 SKILL = next(p for p in (HERE / 'skills' / 'star-content-agent', HERE / 'star-content-agent') if p.is_dir())
-VERSION = '2026-10-21-v2.1'
-ORDER = ['SKILL.md', 'setup.md', 'daily-run.md', 'read-one.md', 'library.md', 'pick.md',
+VERSION = '2026-10-21-v2.2'
+ORDER = ['SKILL.md', 'setup.md', 'daily-run.md', 'read-list.md', 'read-one.md', 'library.md', 'pick.md',
          'state.template.json', 'gate.sh', 'gate.ps1',
          'js/page-check.js', 'js/video-prep.js', 'js/video-seek.js', 'LICENSE']
 BEGIN, END = '===8<=== FILE ', '===8<=== END '   # 都是 ASCII，只认独占一行、从行首开始的标记

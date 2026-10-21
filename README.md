@@ -71,6 +71,7 @@
 | `skills/star-content-agent/SKILL.md` | 入口：硬规矩、路由表、门卫用法 |
 | `skills/star-content-agent/setup.md` | 第一次设置（第 0 步是本地审查） |
 | `skills/star-content-agent/daily-run.md` | 每天运行 |
+| `skills/star-content-agent/read-list.md` | 翻收藏列表（以页面为准，接口数据只用来补字段和交叉核对） |
 | `skills/star-content-agent/read-one.md` | 读一条收藏 |
 | `skills/star-content-agent/library.md` | 数据目录、状态文件、收藏库字段 |
 | `skills/star-content-agent/pick.md` | 挑选，包括视频里那段提示词 |

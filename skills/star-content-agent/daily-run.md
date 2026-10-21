@@ -40,7 +40,7 @@
    - 交付成功后才做这几件事：在 `selected_ids` 每一条的 picked 里记上今天；更新 `last_delivery`。
    - 通知发不出去：文件留着，在 run.log 里记「通知失败」，下次用户开口时先告诉他。
 7. **读新收藏，留给明天。** 对今天没暂停、没 blocked 的平台：
-   1. **拉新收藏**：照 site-notes.md 从收藏夹入口打开，从上往下看。
+   1. **拉新收藏**：照 site-notes.md 从收藏夹入口打开，按 `read-list.md` 从上往下看，以页面上读到的为准。
       - 列表顺序已经确认过（`order_verified` 为 true）：连着碰到 5 条库里已有的，就不用再往下翻了。
       - 没确认过：最多翻 3 批。
       - 库里没有的写进去，first_seen 记今天；命中 skip.txt 的只记 id 和 skipped。
