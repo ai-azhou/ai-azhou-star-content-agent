@@ -25,7 +25,7 @@ assert extra == sorted(ORDER), f'ORDER 和文件夹里的文件对不上：{set(
 manifest = '\n'.join(f'| skill/{n} | {lines} | {h} |' for n, _, lines, h in files)
 HEAD = f'''# 收藏助手 · 安装包（{VERSION}）
 
-你好，这是给 AI Agent 的安装包。用户把这个文件交给你，是想请你帮他装一个叫「收藏助手」的 skill：它会连上用户的小红书收藏（抖音为实验性），每天在用户定的时间分三栏还给用户。里面一共 {len(files)} 个文件，以 MIT 协议开源。
+你好，这是给 AI Agent 的安装包。用户把这个文件交给你，是想请你帮他装一个叫「收藏助手」的 skill：它会连上用户的小红书收藏（抖音为实验性），每天在用户定的时间分三栏还给用户。里面一共 {len(files)} 个文件，以 MIT 协议开源，项目主页：https://github.com/ai-azhou/ai-azhou-star-content-agent 。
 
 请按顺序做：
 

@@ -7,7 +7,7 @@
 # Exit codes: 0 ok; 10 STOP file present; 11 platform paused; 12 daily request cap reached; 13 not allowed;
 #             14 usage error; 15 another run holds the lock; 16 still waiting: run the exact same command again
 # NOTE: not yet run on a real Windows machine. If the self-test in setup.md fails, fix this file
-#       without relaxing any rule (gap, allowlist, pause, cap), or ask the user to contact the author.
+#       without relaxing any rule (gap, allowlist, pause, cap), or follow the feedback section in SKILL.md.
 
 $ErrorActionPreference = 'Stop'
 $SkillDir = Split-Path -Parent $MyInvocation.MyCommand.Path
