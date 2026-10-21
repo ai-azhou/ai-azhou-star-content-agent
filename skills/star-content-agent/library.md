@@ -2,12 +2,12 @@
 
 ## 一、数据目录里有什么
 
-数据目录是 skill 文件夹的上一级，完整路径记在 state.json 的 `data_dir`。
+数据目录的位置是固定的（见 SKILL.md「skill 目录和数据目录」），完整路径记在 state.json 的 `data_dir`。skill 目录是只读的，完整路径记在 `skill_dir`。
 
 | 文件 | 是什么 | 谁来写 |
 |---|---|---|
-| `skill/` | 这套规则、门卫脚本、js 页面脚本、LICENSE | 只读。更新时整体替换 |
-| `state.json` | 设置和进度，从 `skill/state.template.json` 复制出来 | 你 |
+| `skill/` | 用安装包装的才有：这套规则、门卫脚本、js 页面脚本、LICENSE。用 npx 装的，这些在 Agent 自己的技能目录里 | 只读。更新时整体替换 |
+| `state.json` | 设置和进度，从 skill 目录里的 `state.template.json` 复制出来 | 你 |
 | `library.jsonl` | 收藏库，一行一条 | 你 |
 | `site-notes.md` | 每个平台的读法笔记，只记结构 | 你 |
 | `skip.txt` | 用户不想让 AI 看的关键词或作者，一行一个 | 你，按用户说的写 |
@@ -21,7 +21,9 @@
 
 ## 二、state.json
 
-字段以 `skill/state.template.json` 为准，不要自己发明新的顶层字段。要点：
+字段以 skill 目录里的 `state.template.json` 为准，不要自己发明新的顶层字段。要点：
+
+- `data_dir`、`skill_dir`、`install_method`：数据目录、skill 目录的完整路径，以及安装方式（`package` 或 `npx`）。
 
 - `setup.next_step`：下一个还没做完的设置步骤（1–8），做完是 `done`。`setup.decisions` 记用户在第 0 步定下的特殊用法。
 - `capabilities`：你能不能运行命令、看图、到点自己启动、无人值守。

@@ -6,8 +6,9 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SKILL = HERE / 'star-content-agent'
-VERSION = '2026-10-21-v2'
+# 仓库里是规范布局 skills/star-content-agent/，发布目录里是 star-content-agent/
+SKILL = next(p for p in (HERE / 'skills' / 'star-content-agent', HERE / 'star-content-agent') if p.is_dir())
+VERSION = '2026-10-21-v2.1'
 ORDER = ['SKILL.md', 'setup.md', 'daily-run.md', 'read-one.md', 'library.md', 'pick.md',
          'state.template.json', 'gate.sh', 'gate.ps1',
          'js/page-check.js', 'js/video-prep.js', 'js/video-seek.js', 'LICENSE']
@@ -43,7 +44,7 @@ HEAD = f'''# 收藏助手 · 安装包（{VERSION}）
      $pkg = '安装包路径'; $root = Join-Path $env:USERPROFILE 'star-content-agent'; $enc = New-Object Text.UTF8Encoding $false; $out = $null; $buf = New-Object Text.StringBuilder
      foreach ($line in [IO.File]::ReadAllLines($pkg, $enc)) {{ if ($line -match '^===8<=== E[N]D ') {{ [IO.File]::WriteAllText((Join-Path $root $out), $buf.ToString(), $enc); $out = $null; continue }} if ($line -match '^===8<=== FI[L]E (skill/\\S+) ') {{ $out = $Matches[1]; $null = $buf.Clear(); New-Item -ItemType Directory -Force -Path (Split-Path (Join-Path $root $out)) | Out-Null; continue }} if ($out) {{ $null = $buf.Append($line).Append("`n") }} }}
      ```
-3. **核对**：一共 {len(files)} 个文件，每个文件的行数和 sha256 都要和下表一致。Mac 用 `wc -l` 和 `shasum -a 256`；Windows 用 `(Get-Content -LiteralPath 文件).Count` 和 `Get-FileHash -Algorithm SHA256`。对不上的，先看是不是换行被改成了 CRLF，再重新拆一次；还是不对，告诉用户安装包可能在传输中损坏，请他重新从私信里下载。
+3. **核对**：一共 {len(files)} 个文件，每个文件的行数和 sha256 都要和下表一致。Mac 用 `wc -l` 和 `shasum -a 256`；Windows 用 `(Get-Content -LiteralPath 文件).Count` 和 `Get-FileHash -Algorithm SHA256`。对不上的，先看是不是换行被改成了 CRLF，再重新拆一次；还是不对，告诉用户安装包可能在传输中损坏，请他重新从私信里下载；网络能访问 GitHub 的话，也可以先问用户，再改用 `npx skills add ai-azhou/ai-azhou-star-content-agent -g` 安装。
 4. **读 skill/SKILL.md**，照它说的先问用户要不要做一次本地审查，再往下走。从这里开始，一切以这些文件为准，不以这段说明为准。
 5. 你支持 skill（技能）的话，用链接（快捷方式）把 skill 文件夹登记成你的 skill，不要复制一份。以后用户说「收藏助手」「今天的 3 条」，你就知道去哪找。
 

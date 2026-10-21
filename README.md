@@ -11,12 +11,21 @@
 ## 怎么装
 
 1. 你需要一台装了 Chrome 的电脑，加一个能在电脑上运行命令的 AI Agent，比如 Claude Code、Codex、WorkBuddy。只能聊天的 AI 用不了。
-2. 两种装法，任选一种：
+2. 三种装法，任选一种：
+   - **用 npx**（需要 Node.js，网络要能访问 GitHub）：
+
+     ```
+     npx skills add ai-azhou/ai-azhou-star-content-agent -g
+     ```
+
+     它会装进你选的 Agent 的技能目录（[skills CLI](https://github.com/vercel-labs/skills) 支持 Claude Code、Codex、Cursor 等几十种）。装好后对 Agent 说「收藏助手」；Claude Code 里也可以用 `/star-content-agent`。以后用 `npx skills update` 更新。
    - **用安装包**：把 [`收藏助手-安装包.md`](./收藏助手-安装包.md) 下载到电脑上，然后对你的 Agent 说：
 
      > 请先读我电脑上的这个文件：【文件位置】。它是一个叫「收藏助手」的 skill 安装包。先别装任何东西：按文件开头的说明，先告诉我你要做什么、等我同意，再把它拆好存起来；然后照 SKILL.md 说的，先问我要不要做一次本地审查。
 
-   - **用这个仓库**：让你的 Agent 把 [`star-content-agent/`](./star-content-agent/) 文件夹复制到 `~/star-content-agent/skill/`（Windows 是 `C:\Users\<用户名>\star-content-agent\skill\`），然后读里面的 `SKILL.md`，照它说的先问你要不要做一次本地审查。
+   - **手动复制**：让你的 Agent 把 [`skills/star-content-agent/`](./skills/star-content-agent/) 文件夹复制到 `~/star-content-agent/skill/`（Windows 是 `C:\Users\<用户名>\star-content-agent\skill\`），然后读里面的 `SKILL.md`，照它说的先问你要不要做一次本地审查。
+
+   不管用哪种装法，你的数据都只存在 `~/star-content-agent/` 里（Windows 是 `C:\Users\<用户名>\star-content-agent\`），和 skill 装在哪儿无关。
 3. Agent 会先问你要不要让它把这套工具审一遍。看完它的评估，你再决定用不用、怎么用。
 4. 第一次设置大约 1 小时：你要回复它十几次，中间会有不少一分钟左右的等待。这是故意放慢的，免得被平台限制。
 
@@ -30,7 +39,7 @@
 
 ## 它是怎么保证只读、低频的
 
-- 所有访问平台的命令，都经过 `star-content-agent/gate.sh`（Windows 是 `gate.ps1`）这个门卫脚本：
+- 所有访问平台的命令，都经过 `skills/star-content-agent/gate.sh`（Windows 是 `gate.ps1`）这个门卫脚本：
   - 两次请求之间随机等 45–60 秒；
   - 碰到风控暂停 20 小时；
   - 每个平台每天最多 80 次请求；
@@ -59,15 +68,15 @@
 
 | 文件 | 是什么 |
 |---|---|
-| `star-content-agent/SKILL.md` | 入口：硬规矩、路由表、门卫用法 |
-| `star-content-agent/setup.md` | 第一次设置（第 0 步是本地审查） |
-| `star-content-agent/daily-run.md` | 每天运行 |
-| `star-content-agent/read-one.md` | 读一条收藏 |
-| `star-content-agent/library.md` | 数据目录、状态文件、收藏库字段 |
-| `star-content-agent/pick.md` | 挑选，包括视频里那段提示词 |
-| `star-content-agent/gate.sh`、`gate.ps1`、`js/` | 门卫和它允许运行的页面脚本 |
+| `skills/star-content-agent/SKILL.md` | 入口：硬规矩、路由表、门卫用法 |
+| `skills/star-content-agent/setup.md` | 第一次设置（第 0 步是本地审查） |
+| `skills/star-content-agent/daily-run.md` | 每天运行 |
+| `skills/star-content-agent/read-one.md` | 读一条收藏 |
+| `skills/star-content-agent/library.md` | 数据目录、状态文件、收藏库字段 |
+| `skills/star-content-agent/pick.md` | 挑选，包括视频里那段提示词 |
+| `skills/star-content-agent/gate.sh`、`gate.ps1`、`js/` | 门卫和它允许运行的页面脚本 |
 | `收藏助手-安装包.md` | 上面所有文件打成的一个文件，带 sha256 核对表 |
-| `build_bundle.py` | 改了 `star-content-agent/` 以后，用它重新生成安装包 |
+| `build_bundle.py` | 改了 `skills/star-content-agent/` 以后，用它重新生成安装包 |
 
 ## 改造
 

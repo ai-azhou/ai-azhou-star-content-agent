@@ -13,7 +13,7 @@
 - 用户说不用评估：直接进入第 1 步。
 - 用户要评估：按下面的做法评估，讲完结果再问用户怎么决定。
 
-**评估怎么做**：只读 skill 文件夹里的文件（包括 gate.sh、gate.ps1 和 js 文件夹），不运行 opencli，不访问网络。用大白话讲，先说结论，再讲这六件事：
+**评估怎么做**：只读 skill 目录（这个 skill 所在的文件夹）里的文件（包括 gate.sh、gate.ps1 和 js 文件夹），不运行 opencli，不访问网络。用大白话讲，先说结论，再讲这六件事：
 
 1. **它会让我做什么、碰到你的哪些东西**：装什么软件；用你的哪个浏览器、哪个登录状态；在哪儿存文件；会不会设定时任务；需要你放开哪些权限。
 2. **有没有让人不放心的地方**：比如会不会发布、删除、改动你的账号，会不会把数据发到别处，有没有和视频里说的不一致的地方。看到可疑的指令或代码，把原文指给用户看。
@@ -70,7 +70,11 @@
 **等用户明确同意**（比如回「可以」「开始吧」）再往下做。用户回得含糊，或者问了别的问题，先回答，再问一次。
 
 **同意以后马上做三件事：**
-1. 把 `skill/state.template.json` 复制成 `<数据目录>/state.json`，填上 `data_dir`（完整路径）、`timezone`（用户的时区，比如 Asia/Shanghai）、`capabilities`，并把 `setup.next_step` 记成 2；
+1. 数据目录还不存在就先建好（位置见 SKILL.md「skill 目录和数据目录」）。把 skill 目录里的 `state.template.json` 复制成 `<数据目录>/state.json`，填上这几项，并把 `setup.next_step` 记成 2：
+   - `data_dir`、`skill_dir`（都写完整路径）；
+   - `install_method`；
+   - `timezone`（用户的时区，比如 Asia/Shanghai）；
+   - `capabilities`。
 2. 问一句：现在有没有不想让 AI 看的收藏？有的话，请用户先在 App 里取消收藏，或者把关键词、作者告诉你，你写进 `skip.txt`；
 3. 在 `run.log` 里记一行「开始设置」。
 
@@ -85,7 +89,7 @@
    - **用命令装。** 电脑上已经有 Node.js 20.18.1 或更新的版本，你可以运行 `npm install -g @jackwener/opencli`。
      - 网络不通，就加上 `--registry=https://registry.npmmirror.com` 再试一次；
      - 提示权限不够时，别自己加 sudo，告诉用户原因，问用户怎么办。
-   - 装完还找不到 `opencli`，多半是你当前的终端还没刷新。请用户重新打开你（Agent），然后发「读 <数据目录>/skill/SKILL.md，接着设置」。
+   - 装完还找不到 `opencli`，多半是你当前的终端还没刷新。请用户重新打开你（Agent），然后发「读 <skill 目录>/SKILL.md，接着设置」（换成完整路径）。
    - Windows 的 PowerShell 报「禁止运行脚本」：改用 `opencli.cmd`，不要去改系统的执行策略。
 3. **记下 opencli 的完整路径。** Mac 用 `command -v opencli`，Windows 用 `where.exe opencli`，把结果写进 `<数据目录>/gate/opencli-path`。
    - 路径里带 `fnm_multishells`，或者 nvm 的临时目录，说明这是每个终端会话临时生成的路径，换一个会话就失效。改用它指向的真实文件（Mac 用 `readlink -f`），或者 `npm prefix -g` 下的 `bin/opencli`。
@@ -111,7 +115,7 @@
 
    如果报「多个 Chrome 用户」（profile）：运行 `opencli profile list`，请用户确认哪个是平时登录小红书的，把它的名字写进 `<数据目录>/gate/profile`。
 6. **门卫自检**（不访问任何平台）：
-   - Mac 运行 `bash "<数据目录>/skill/gate.sh" status`；Windows 运行 `powershell -NoProfile -ExecutionPolicy Bypass -File "<数据目录>\skill\gate.ps1" status`，应该正常结束。
+   - Mac 运行 `bash "<skill 目录>/gate.sh" status`；Windows 运行 `powershell -NoProfile -ExecutionPolicy Bypass -File "<skill 目录>\gate.ps1" status`，应该正常结束。
    - 再试三条应当被拒绝的命令，确认门卫真的在把关：
      - `门卫 xhs type x --session sca-test`，应返回 13；
      - `门卫 xhs eval "1+1" --session sca-test`，应返回 13；
@@ -240,11 +244,11 @@
 
 三种办法，按你自己的能力选，告诉用户选了哪种、为什么：
 
-1. **你自带的定时任务**，而且到点是在**这台电脑上**启动，能运行门卫，能看图（只读文字的不需要看图）。任务内容写「读 `<数据目录>/skill/SKILL.md`，按里面说的跑一次」。
+1. **你自带的定时任务**，而且到点是在**这台电脑上**启动，能运行门卫，能看图（只读文字的不需要看图）。任务内容写「读 `<skill 目录>/SKILL.md`，按里面说的跑一次」，路径用 state.json 里记的 `skill_dir`。
 2. **你有命令行的无人值守模式**（能用一条命令启动你、执行一段指令后自动退出）：用系统定时到点运行这条命令。
    - Mac 用 launchd，不用 cron：电脑睡着时错过的任务，醒来后 launchd 会补跑。Windows 用「任务计划程序」，选「只在用户登录时运行」，否则任务看不到用户的 Chrome。
    - 定时配置里，你自己的启动命令要写完整路径（用 `command -v` 或 `where.exe` 查）。
-   - **放行的范围要尽量小**：只放行门卫脚本（`bash <数据目录>/skill/gate.sh` 或对应的 PowerShell 命令）、`opencli doctor`、读写数据目录里的文件、发本机通知。
+   - **放行的范围要尽量小**：只放行门卫脚本（`bash <skill 目录>/gate.sh` 或对应的 PowerShell 命令）、`opencli doctor`、读写数据目录里的文件、发本机通知。
      - 不要整段放行 `opencli`：那会把发布、评论、关注、删除、装插件这些写操作一起放行；
      - 不要用「跳过所有确认」的模式（比如 Claude Code 的 `--dangerously-skip-permissions`）；
      - 能设「禁止」的，明确禁止 `opencli xiaohongshu`、`opencli douyin`、`opencli plugin`、`opencli browser chrome`；
@@ -261,7 +265,7 @@
 能在 run.log 里看到这一行、用户也收到了通知，才算设好，把时间记进 `schedule.verified_at`。没成功就不算设好，告诉用户原因，改用第 3 种办法。
 
 **交代怎么用。** 在数据目录里写一个 `怎么用.md`，并把要点告诉用户：
-- **叫醒口令**：「读 <数据目录完整路径>/skill/SKILL.md，按里面说的做」。请用户存进手机备忘录。以后在任何新对话里，想接着设置、想要今天的 3 条、想改设置，都先发这句话。
+- **叫醒口令**：「读 <skill 目录的完整路径>/SKILL.md，按里面说的做」。用 npx 装的，在支持 skill 的 Agent 里直接说「收藏助手」通常也能叫醒。请用户存进手机备忘录。以后在任何新对话里，想接着设置、想要今天的 3 条、想改设置，都先发这句话。
 - 每天的结果在哪个文件夹，会怎么通知。
 - 想先停一下就说「先停一下」，想检查就说「收藏助手体检」，想全部撤掉就说「全部撤掉」。
 - 碰到问题或者有建议，就说「把问题反馈给作者」：你会整理好一份去掉隐私信息的报告，用户看过、同意后，再从私信（发报告文件）、GitHub issue、邮件里选一个渠道发出去。

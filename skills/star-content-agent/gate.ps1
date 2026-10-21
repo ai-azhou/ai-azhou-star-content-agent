@@ -1,5 +1,6 @@
 # Star-content-agent gate (Windows). Same usage, rules and exit codes as gate.sh.
 # ASCII only on purpose: Windows PowerShell 5.1 reads BOM-less scripts in the system code page.
+# Data dir is fixed: %USERPROFILE%\star-content-agent (or $env:STAR_CONTENT_AGENT_HOME), wherever this script is installed.
 # Call it like this:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File "<data dir>\skill\gate.ps1" <platform> <subcommand> [args...]
 #   e.g. ... gate.ps1 xhs open "https://..." --session sca-fav
@@ -11,7 +12,7 @@
 
 $ErrorActionPreference = 'Stop'
 $SkillDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Data = Split-Path -Parent $SkillDir
+$Data = if ($env:STAR_CONTENT_AGENT_HOME) { $env:STAR_CONTENT_AGENT_HOME } else { Join-Path $env:USERPROFILE 'star-content-agent' }
 $G = Join-Path $Data 'gate'
 $Tmp = Join-Path $Data 'tmp'
 New-Item -ItemType Directory -Force -Path $G, $Tmp | Out-Null

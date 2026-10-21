@@ -1,7 +1,9 @@
 {
   "schema_version": 2,
-  "skill_version": "2026-10-21-v2",
+  "skill_version": "2026-10-21-v2.1",
   "data_dir": "",
+  "skill_dir": "",
+  "install_method": "",
   "timezone": "",
   "setup": { "next_step": 1, "decisions": "" },
   "capabilities": { "run_commands": null, "see_images": null, "local_schedule": null, "unattended": null },

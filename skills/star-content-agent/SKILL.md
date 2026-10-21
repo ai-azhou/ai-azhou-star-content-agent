@@ -4,7 +4,7 @@ description: 收藏助手。只读、低频地读用户在小红书网页版（�
 license: MIT
 ---
 
-# 收藏助手 · v2（2026-10-21）
+# 收藏助手 · v2.1（2026-10-21）
 
 帮用户做两件事：
 1. 读懂用户在小红书（抖音为实验性）网页版里的收藏，存成本地收藏库；
@@ -14,11 +14,19 @@ license: MIT
 
 项目主页（最新版本、问题反馈）：https://github.com/ai-azhou/ai-azhou-star-content-agent
 
-## 数据目录
+## skill 目录和数据目录
 
-- 数据目录就是这个 skill 文件夹的上一级，一般是 Mac 的 `~/star-content-agent/`、Windows 的 `C:\Users\<用户名>\star-content-agent\`。
-- 第一次运行时，把它的完整路径记进 state.json 的 `data_dir`，以后所有路径都用完整路径。
-- Windows 的 PowerShell 里用 `$env:USERPROFILE`，不要用 `%USERPROFILE%`（那是 cmd 的写法，在 PowerShell 里不会展开）。
+- **skill 目录**：就是这个 SKILL.md 所在的文件夹。它是只读的，不在里面存任何数据。它在哪儿，看用户是怎么装的：
+  - 用安装包装的，在 `~/star-content-agent/skill/`；
+  - 用 `npx skills add ai-azhou/ai-azhou-star-content-agent` 装的，在你（Agent）自己的技能目录里，比如 Claude Code 的 `~/.claude/skills/star-content-agent/`。
+- **数据目录**：位置固定，和 skill 装在哪儿无关，门卫脚本也按这个规则找它。
+  - Mac 是 `~/star-content-agent/`，Windows 是 `C:\Users\<用户名>\star-content-agent\`；
+  - Windows 的 PowerShell 里写 `$env:USERPROFILE\star-content-agent`，不要用 `%USERPROFILE%`（那是 cmd 的写法，在 PowerShell 里不会展开）；
+  - 用户设了环境变量 `STAR_CONTENT_AGENT_HOME` 的，以它为准。
+- 第一次运行时，在 state.json 里记三样东西，以后所有路径都用完整路径：
+  - `data_dir`：数据目录的完整路径；
+  - `skill_dir`：skill 目录的完整路径；
+  - `install_method`：用安装包装的记 `package`，用 npx 装的记 `npx`。
 - 各个文件是做什么的，见 `library.md` 第一节。
 
 ## 每次开始先做三件事
@@ -42,8 +50,8 @@ license: MIT
 
 不要直接运行 `opencli browser`，一律这样调用：
 
-- Mac：`bash "<数据目录>/skill/gate.sh" <平台> <子命令> [参数...]`
-- Windows：`powershell -NoProfile -ExecutionPolicy Bypass -File "<数据目录>\skill\gate.ps1" <平台> <子命令> [参数...]`
+- Mac：`bash "<skill 目录>/gate.sh" <平台> <子命令> [参数...]`
+- Windows：`powershell -NoProfile -ExecutionPolicy Bypass -File "<skill 目录>\gate.ps1" <平台> <子命令> [参数...]`
 
 平台名用 `xhs`（小红书）和 `douyin`（抖音）。会话名一律以 `sca-` 开头，比如 `--session sca-fav`。这几个文件里写作「门卫 …」的地方，都是指上面这条完整的调用命令。
 
@@ -136,10 +144,11 @@ license: MIT
 - **「删掉这条」**：从收藏库里删掉这一条，再问用户要不要同时删掉 picks 里的相关内容。
 - **「收藏助手体检」**：不访问任何平台。依次运行 `opencli doctor` 和 `门卫 status`，再检查 state.json、定时任务是否还在、run.log 最后 3 行，用大白话汇报哪里正常、哪里不对。
 - **「更新收藏助手」**：
-  - 先从项目主页拿最新的安装包：`https://raw.githubusercontent.com/ai-azhou/ai-azhou-star-content-agent/main/%E6%94%B6%E8%97%8F%E5%8A%A9%E6%89%8B-%E5%AE%89%E8%A3%85%E5%8C%85.md`。网络不通，就请用户向作者要新版的安装包文件。
+  - 用 npx 装的（state.json 的 `install_method` 是 `npx`）：先问用户，再运行 `npx skills update star-content-agent`。网络不通，就改用下面安装包的办法。
+  - 用安装包装的：先从项目主页拿最新的安装包：`https://raw.githubusercontent.com/ai-azhou/ai-azhou-star-content-agent/main/%E6%94%B6%E8%97%8F%E5%8A%A9%E6%89%8B-%E5%AE%89%E8%A3%85%E5%8C%85.md`。网络不通，就请用户向作者要新版的安装包文件。
   - 按安装包开头的说明拆到一个新文件夹，核对 sha256。
   - 对比新旧版本号。你之前为了修问题改过门卫或其他文件的，把这些改动指给用户看，问用户要不要保留。
-  - 只替换 `skill/` 里的文件，不动数据。
+  - 只替换 skill 目录里的文件，不动数据目录。
   - 告诉用户这一版改了什么。
 - **「把问题反馈给作者」「联系作者」「我有个建议」**：按下面「反馈问题、联系作者」一节做。
 - **「再加一个平台」**：按 `setup.md` 第 3、4 步接上新平台。

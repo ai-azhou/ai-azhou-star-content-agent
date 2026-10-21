@@ -1,6 +1,7 @@
 #!/bin/bash
 # 收藏助手的门卫（Mac / Linux）。所有访问平台的 opencli browser 命令都经它发出：
 # 它负责控频、风控暂停、急停、每天请求上限、命令白名单，并把 OpenCLI 的缓存留在数据目录里。
+# 数据目录固定是 ~/star-content-agent（设了 STAR_CONTENT_AGENT_HOME 就用它），和这个脚本装在哪儿无关。
 #
 #   gate.sh <平台> <browser 子命令> [参数...]   例：gate.sh xhs open "https://..." --session sca-fav
 #   gate.sh <平台> pace                          只等够请求间隔并记一次请求（点开会加载新内容的标签前用）
@@ -13,7 +14,7 @@
 
 set -u
 SKILL_DIR=$(cd "$(dirname "$0")" && pwd)
-DATA=$(dirname "$SKILL_DIR")
+DATA="${STAR_CONTENT_AGENT_HOME:-$HOME/star-content-agent}"
 G="$DATA/gate"
 mkdir -p "$G" "$DATA/tmp"
 
