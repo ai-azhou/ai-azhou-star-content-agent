@@ -8,10 +8,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 # 仓库里是规范布局 skills/star-content-agent/，发布目录里是 star-content-agent/
 SKILL = next(p for p in (HERE / 'skills' / 'star-content-agent', HERE / 'star-content-agent') if p.is_dir())
-VERSION = '2026-10-21-v2.2'
+VERSION = '2026-10-21-v2.3'
 ORDER = ['SKILL.md', 'setup.md', 'daily-run.md', 'read-list.md', 'read-one.md', 'library.md', 'pick.md',
          'state.template.json', 'gate.sh', 'gate.ps1',
-         'js/page-check.js', 'js/video-prep.js', 'js/video-seek.js', 'LICENSE']
+         'js/page-check.js', 'js/video-prep.js', 'js/video-seek.js',
+         'templates/picks.html', 'templates/picks-index.html', 'templates/picks.md', 'LICENSE']
 BEGIN, END = '===8<=== FILE ', '===8<=== END '   # 都是 ASCII，只认独占一行、从行首开始的标记
 
 files = []
@@ -35,7 +36,7 @@ HEAD = f'''# 收藏助手 · 安装包（{VERSION}）
    - Mac：在终端运行（把「安装包路径」换成这个文件的完整路径）：
 
      ```
-     mkdir -p ~/star-content-agent/skill/js && cd ~/star-content-agent && awk '{{ sub(/\\r$/, "") }} /^===8<=== E[N]D /{{ close(out); out = ""; next }} /^===8<=== FI[L]E skill\\//{{ out = $3; printf "" > out; next }} out != ""{{ print > out }}' "安装包路径"
+     mkdir -p ~/star-content-agent/skill/js ~/star-content-agent/skill/templates && cd ~/star-content-agent && awk '{{ sub(/\\r$/, "") }} /^===8<=== E[N]D /{{ close(out); out = ""; next }} /^===8<=== FI[L]E skill\\//{{ out = $3; printf "" > out; next }} out != ""{{ print > out }}' "安装包路径"
      ```
 
    - Windows：在 PowerShell 里运行（把「安装包路径」换成这个文件的完整路径）：

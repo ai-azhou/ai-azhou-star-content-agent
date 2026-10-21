@@ -11,7 +11,7 @@
 | `library.jsonl` | 收藏库，一行一条 | 你 |
 | `site-notes.md` | 每个平台的读法笔记，只记结构 | 你 |
 | `skip.txt` | 用户不想让 AI 看的关键词或作者，一行一个 | 你，按用户说的写 |
-| `picks/` | 每天交付的结果，一天一个文件 | 你 |
+| `picks/` | 每天交付的结果：网页 `年-月-日.html`、Markdown 存档 `年-月-日.md`、往期目录 `index.html` | 你 |
 | `tmp/` | 临时截图和 OpenCLI 的缓存，用完即删 | 你和门卫 |
 | `gate/` | 门卫自己的记录（间隔、计数、暂停、锁） | 门卫。你只写其中三个文件：`opencli-path`、`profile`、`limit.<平台>` |
 | `requests.log` | 每一次平台请求的记录 | 门卫 |

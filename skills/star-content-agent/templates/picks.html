@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>收藏回来找你了</title>
+<!--
+  收藏助手每天的交付页（单页网页模板，给 Agent 看，用户看不到这段）。
+
+  用法：
+  1. 把这个文件复制成 <数据目录>/picks/年-月-日.html。
+  2. 只改最下面 <script id="picks-data" type="application/json"> 里的 JSON，页面其余部分不要动。
+     字段说明见 pick.md 第四节。没有的字段留空字符串或空数组，对应的块会自动隐藏。
+  3. JSON 最好用脚本生成（node 的 JSON.stringify，python 的 json.dumps(ensure_ascii=False)），
+     写进文件前把所有 "</" 替换成 "<\/"，防止提前结束 script 标签。
+  4. 页面只把 JSON 里的内容当纯文本显示，链接只接受 https:// 开头的地址；不引用任何外部文件，离线也能打开。
+-->
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --ink: #1b1b1f; --sub: #6b6b73; --line: #e7e5e0; --soft: #f1efea;
+    --rel: #7a5cfa; --use: #c47400; --mem: #0f8f78; --hero1: #efeaff; --hero2: #fff1e3;
+    --todo-bg: #fff4e5; --todo-ink: #6b4300; --todo-line: #ffd59a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141417; --card: #1d1d22; --ink: #ececf1; --sub: #9a9aa5; --line: #2e2e35; --soft: #26262c;
+      --rel: #a98bff; --use: #ffb547; --mem: #5be0c8; --hero1: #241f3a; --hero2: #2f2418;
+      --todo-bg: #2e2416; --todo-ink: #ffd59a; --todo-line: #5c4420;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.75 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+
+  .hero { padding: 26px 24px 22px; border-radius: 20px; background: linear-gradient(135deg, var(--hero1), var(--hero2)); border: 1px solid var(--line); }
+  .hero .date { font-size: 13px; color: var(--sub); letter-spacing: .04em; }
+  .hero h1 { font-size: 30px; line-height: 1.3; margin: 2px 0 10px; }
+  .hero .greeting { font-size: 18px; line-height: 1.7; margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip { font-size: 13px; padding: 3px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--sub); }
+  .chip b { color: var(--ink); font-weight: 700; }
+  .todo { margin: 16px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--todo-bg); color: var(--todo-ink); border: 1px solid var(--todo-line); }
+
+  nav.jump { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; padding: 12px 0; margin-top: 8px; background: var(--bg); }
+  nav.jump a { font-size: 14px; padding: 4px 14px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; color: var(--sub); background: var(--card); }
+  nav.jump a:hover { color: var(--ink); }
+
+  section { margin-top: 30px; scroll-margin-top: 64px; }
+  .rel { --c: var(--rel); } .use { --c: var(--use); } .mem { --c: var(--mem); }
+  .label { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; letter-spacing: .08em; color: var(--c); }
+  .label::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+  section h2 { font-size: 22px; line-height: 1.45; margin: 6px 0 12px; }
+  .lead { margin: 0 0 14px; }
+  .lead b { color: var(--c); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 14px; padding: 16px 18px 14px; margin: 12px 0; }
+  .card h3 { font-size: 17px; line-height: 1.55; margin: 0 0 2px; }
+  .card h3 a { text-decoration: none; background-image: linear-gradient(var(--c), var(--c)); background-size: 100% 1px; background-repeat: no-repeat; background-position: 0 100%; }
+  .card h3 a:hover { color: var(--c); }
+  .by { color: var(--sub); font-size: 13px; }
+  .tag { display: inline-block; font-size: 12px; line-height: 1.6; padding: 0 8px; margin-left: 6px; border: 1px solid var(--line); border-radius: 999px; vertical-align: 1px; }
+  .card p { margin: 8px 0; }
+  .role { font-size: 14px; color: var(--sub); }
+  .role b { color: var(--c); font-weight: 600; }
+  blockquote { margin: 10px 0; padding: 10px 14px; background: var(--soft); border-radius: 10px; }
+  blockquote cite { display: block; margin-top: 4px; font-style: normal; font-size: 12px; color: var(--sub); }
+  .open { display: inline-block; margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--c); text-decoration: none; }
+  .open:hover { text-decoration: underline; }
+  .box { margin: 14px 0 0; padding: 12px 16px; border: 1px dashed var(--c); border-radius: 12px; }
+  .note { font-size: 13px; color: var(--sub); }
+
+  ul.steps { list-style: none; margin: 10px 0; padding: 0; }
+  ul.steps li { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
+  ul.steps input { margin-top: 6px; width: 18px; height: 18px; accent-color: var(--c); flex: none; }
+  ul.steps li.done span { color: var(--sub); text-decoration: line-through; }
+  .copy { margin: 10px 0; }
+  .copy pre { margin: 0; padding: 12px 14px; background: var(--soft); border-radius: 10px; white-space: pre-wrap; word-break: break-word; font: 14px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .btn { font: inherit; font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--c); background: transparent; color: var(--c); cursor: pointer; }
+  .btn.solid { background: var(--c); color: #fff; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .cheer { color: var(--c); font-weight: 600; }
+
+  .bubble { position: relative; margin: 14px 0 0 0; padding: 12px 16px; background: var(--soft); border-radius: 14px 14px 14px 4px; }
+  .bubble .who { font-size: 12px; color: var(--sub); display: block; margin-bottom: 2px; }
+
+  .closing { margin-top: 40px; font-size: 17px; text-align: center; }
+  footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--sub); font-size: 13px; }
+  footer p { margin: 6px 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <div class="date" id="date"></div>
+    <h1>收藏回来找你了</h1>
+    <p class="greeting" id="greeting"></p>
+    <div class="chips" id="chips"></div>
+    <div class="todo" id="todo" hidden></div>
+  </div>
+  <nav class="jump"><a href="#rel">关联</a><a href="#use">今天就用</a><a href="#mem">值得想起</a></nav>
+
+  <section class="rel" id="rel">
+    <div class="label">关联</div>
+    <h2 id="rel-title"></h2>
+    <p class="lead" id="rel-why"></p>
+    <div id="rel-items"></div>
+    <p class="box" id="rel-foryou" hidden></p>
+  </section>
+
+  <section class="use" id="use">
+    <div class="label">今天就用</div>
+    <h2 id="use-title"></h2>
+    <p class="lead" id="use-why"></p>
+    <div class="card" id="use-card"></div>
+  </section>
+
+  <section class="mem" id="mem">
+    <div class="label">值得想起</div>
+    <h2 id="mem-title"></h2>
+    <div class="card" id="mem-card"></div>
+  </section>
+
+  <p class="closing" id="closing"></p>
+  <footer>
+    <div id="notes"></div>
+    <p><a href="index.html">← 往期</a> · 这份文件只存在你的电脑上</p>
+  </footer>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var D = JSON.parse(document.getElementById('picks-data').textContent);
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function safeUrl(u) { return typeof u === 'string' && /^https:\/\//i.test(u) ? u : ''; }
+  function link(text, url, cls) {
+    var u = safeUrl(url), a = el(u ? 'a' : 'span', cls, text);
+    if (u) { a.href = u; a.target = '_blank'; a.rel = 'noopener'; }
+    return a;
+  }
+  function setText(id, text) { var e = $(id); if (text) { e.textContent = text; e.hidden = false; } else { e.hidden = true; } }
+  function header(item, extra) {
+    var f = document.createDocumentFragment(), h = el('h3');
+    h.appendChild(link(item.title || '（无标题）', item.url));
+    f.appendChild(h);
+    var by = el('div', 'by', item.author || '');
+    if (item.type) by.appendChild(el('span', 'tag', item.type));
+    if (extra) by.appendChild(document.createTextNode(' · ' + extra));
+    f.appendChild(by);
+    return f;
+  }
+  function quote(q, from) {
+    if (!q) return null;
+    var b = el('blockquote', null, '「' + q + '」');
+    if (from) b.appendChild(el('cite', null, '出处：' + from));
+    return b;
+  }
+  function openBtn(url) { var a = link('打开原帖 →', url, 'open'); return safeUrl(url) ? a : null; }
+  function add(parent, child) { if (child) parent.appendChild(child); }
+  var store = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+                set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+  var KEY = 'sca-picks-' + (D.date || 'today');
+
+  document.title = '收藏回来找你了 · ' + (D.date || '');
+  $('date').textContent = [D.date_label || D.date, D.time].filter(Boolean).join(' ');
+  setText('greeting', D.greeting);
+  var S = D.stats || {}, chips = $('chips');
+  [['收藏', S.total, '条'], ['读懂了', S.read, '条'], ['今天新收藏', S.new_today, '条'], ['今天挑了', S.picked, '条']].forEach(function (c) {
+    if (c[1] === undefined || c[1] === null || c[1] === '') return;
+    var s = el('span', 'chip'); s.appendChild(document.createTextNode(c[0] + ' ')); s.appendChild(el('b', null, String(c[1]))); s.appendChild(document.createTextNode(' ' + c[2])); chips.appendChild(s);
+  });
+  setText('todo', D.todo ? '需要你做的一件事：' + D.todo : '');
+
+  // 关联
+  var R = D.relate || {};
+  $('rel-title').textContent = R.title || '今天没找到靠谱的关联';
+  setText('rel-why', R.why);
+  (R.items || []).forEach(function (it) {
+    var c = el('article', 'card');
+    c.appendChild(header(it));
+    add(c, it.summary ? el('p', null, it.summary) : null);
+    if (it.role) { var r = el('p', 'role'); r.appendChild(el('b', null, '在这个道理里：')); r.appendChild(document.createTextNode(it.role)); c.appendChild(r); }
+    add(c, quote(it.quote, it.quote_from));
+    add(c, openBtn(it.url));
+    $('rel-items').appendChild(c);
+  });
+  if (R.for_you) { var fy = $('rel-foryou'); fy.hidden = false; fy.appendChild(el('b', null, '对你来说：')); fy.appendChild(document.createTextNode(R.for_you)); }
+
+  // 今天就用
+  var U = D.use || {}, uc = $('use-card');
+  $('use-title').textContent = U.title || '';
+  setText('use-why', U.why);
+  if (U.item) uc.appendChild(header(U.item));
+  var done = store.get(KEY) || { steps: [], finished: false };
+  if ((U.steps || []).length) {
+    var ul = el('ul', 'steps');
+    U.steps.forEach(function (s, i) {
+      var li = el('li'), cb = el('input'); cb.type = 'checkbox'; cb.checked = !!done.steps[i];
+      var sp = el('span', null, s); if (cb.checked) li.className = 'done';
+      cb.addEventListener('change', function () { done.steps[i] = cb.checked; li.className = cb.checked ? 'done' : ''; store.set(KEY, done); });
+      li.appendChild(cb); li.appendChild(sp); ul.appendChild(li);
+    });
+    uc.appendChild(ul);
+  }
+  if (U.copy) {
+    var cp = el('div', 'copy'); cp.appendChild(el('pre', null, U.copy));
+    var cb2 = el('button', 'btn', '复制'); cb2.type = 'button';
+    cb2.addEventListener('click', function () {
+      var ok = function () { cb2.textContent = '已复制'; setTimeout(function () { cb2.textContent = '复制'; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(U.copy).then(ok, fallback); } else { fallback(); }
+      function fallback() { var t = el('textarea'); t.value = U.copy; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (e) {} t.remove(); }
+    });
+    var row0 = el('div', 'row'); row0.appendChild(cb2); cp.appendChild(row0); uc.appendChild(cp);
+  }
+  add(uc, U.payoff ? (function () { var p = el('p'); p.appendChild(el('b', null, '做完你会得到：')); p.appendChild(document.createTextNode(U.payoff)); return p; })() : null);
+  add(uc, U.caution ? el('p', 'note', U.caution) : null);
+  add(uc, U.nudge ? (function () { var b = el('div', 'bubble'); b.appendChild(el('span', 'who', '收藏助手')); b.appendChild(document.createTextNode(U.nudge)); return b; })() : null);
+  var row = el('div', 'row'); add(row, openBtn(U.item && U.item.url));
+  var fin = el('button', 'btn solid', '我做完了'); fin.type = 'button';
+  var cheer = el('span', 'cheer');
+  function showDone() { fin.hidden = true; cheer.textContent = U.cheer || '做完了！这条收藏终于不只是收藏了。'; }
+  fin.addEventListener('click', function () { done.finished = true; store.set(KEY, done); showDone(); });
+  if (U.title) { row.appendChild(fin); row.appendChild(cheer); }
+  if (done.finished) showDone();
+  uc.appendChild(row);
+
+  // 值得想起
+  var M = D.remember || {}, mc = $('mem-card');
+  $('mem-title').textContent = M.title || '';
+  if (M.item) mc.appendChild(header(M.item, M.when));
+  add(mc, M.why ? el('p', null, M.why) : null);
+  add(mc, quote(M.quote, M.quote_from));
+  add(mc, M.nudge ? (function () { var b = el('div', 'bubble'); b.appendChild(el('span', 'who', '收藏助手')); b.appendChild(document.createTextNode(M.nudge)); return b; })() : null);
+  add(mc, openBtn(M.item && M.item.url));
+
+  setText('closing', D.closing);
+  (D.notes || []).forEach(function (n) { $('notes').appendChild(el('p', null, n)); });
+});
+</script>
+
+<!-- 只改下面这段 JSON。字段说明见 pick.md 第四节。 -->
+<script id="picks-data" type="application/json">
+{
+  "date": "2026-01-01",
+  "date_label": "1月1日",
+  "time": "15:00",
+  "greeting": "开场一句：用今天挑出的内容说一个具体的发现。",
+  "stats": { "total": 0, "read": 0, "new_today": 0, "picked": 0 },
+  "todo": "",
+  "relate": {
+    "title": "这几条共同讲的道理，一句话",
+    "why": "为什么这几条能串起来：落在它们共同的机制上，不是表面关键词。",
+    "items": [
+      { "title": "标题", "url": "https://...", "author": "作者", "type": "图文",
+        "summary": "这条讲了什么，一两句。", "role": "它在这个道理里扮演什么角色。",
+        "quote": "原话，一字不改", "quote_from": "正文" }
+    ],
+    "for_you": "这个发现能帮用户做什么决定。"
+  },
+  "use": {
+    "title": "今天 30 分钟内能做的一件事",
+    "why": "为什么是它、为什么是今天。",
+    "item": { "title": "标题", "url": "https://...", "author": "作者", "type": "图文" },
+    "steps": ["第一步", "第二步"],
+    "copy": "",
+    "payoff": "做完你会得到什么。",
+    "caution": "",
+    "nudge": "一句具体到动作的轻推。",
+    "cheer": "点了「我做完了」以后显示的一句话。"
+  },
+  "remember": {
+    "title": "这条旧收藏为什么现在还重要，一句话",
+    "item": { "title": "标题", "url": "https://...", "author": "作者", "type": "图文" },
+    "when": "收藏于某日；或：收藏日期未知，按收藏夹里的位置挑",
+    "why": "为什么现在还重要，最好和最近的收藏连起来。",
+    "quote": "原话", "quote_from": "正文",
+    "nudge": "补一刀：有点损、但是好心。"
+  },
+  "closing": "收尾一句，轻松一点。",
+  "notes": ["没回原帖确认的、读得不完整的，逐条写在这里；都没有就留空数组。"]
+}
+</script>
+</body>
+</html>

@@ -74,11 +74,13 @@ esac
 P="$1"; SUB="$2"; shift 2
 case "$P" in *[!a-z0-9-]*|"") say "平台名只能用小写字母、数字和横线"; exit 14 ;; esac
 
-[ -f "$DATA/STOP" ] && { say "急停开着（数据目录里有 STOP 文件），不访问平台"; exit 10; }
-
-if [ -f "$G/pause.$P" ]; then
-  read -r u r < "$G/pause.$P"
-  if [ "${u:-0}" -gt "$(now)" ]; then say "$P 暂停中，到 $(fmt "$u")：$r"; exit 11; fi
+# close 只是收尾（关掉自己开的标签页），急停和暂停期间也放行
+if [ "$SUB" != "close" ]; then
+  [ -f "$DATA/STOP" ] && { say "急停开着（数据目录里有 STOP 文件），不访问平台"; exit 10; }
+  if [ -f "$G/pause.$P" ]; then
+    read -r u r < "$G/pause.$P"
+    if [ "${u:-0}" -gt "$(now)" ]; then say "$P 暂停中，到 $(fmt "$u")：$r"; exit 11; fi
+  fi
 fi
 
 # 分类：request = 算一次请求（45–60 秒间隔、计数）；action = 页面里的操作；free = 只读当前页面

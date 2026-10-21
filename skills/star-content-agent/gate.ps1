@@ -80,11 +80,14 @@ if ($A.Count -lt 2) { exit 14 }
 $P = $A[0]; $Sub = $A[1]
 $Rest = @(); if ($A.Count -gt 2) { $Rest = @($A[2..($A.Count - 1)]) }
 if ($P -notmatch '^[a-z0-9-]+$') { Say 'platform name: lowercase letters, digits and dashes only'; exit 14 }
-if (Test-Path -LiteralPath (Join-Path $Data 'STOP')) { Say 'STOP file present, not touching any platform'; exit 10 }
-$pf = Join-Path $G ('pause.' + $P)
-if (Test-Path -LiteralPath $pf) {
-  $u, $r = (ReadText $pf '0').Split(' ', 2)
-  if ([int64]$u -gt (Now)) { Say ($P + ' is paused until ' + (Fmt $u) + ': ' + $r); exit 11 }
+# close is only cleanup (closing our own tab), so it is allowed even under STOP or a pause
+if ($Sub -ne 'close') {
+  if (Test-Path -LiteralPath (Join-Path $Data 'STOP')) { Say 'STOP file present, not touching any platform'; exit 10 }
+  $pf = Join-Path $G ('pause.' + $P)
+  if (Test-Path -LiteralPath $pf) {
+    $u, $r = (ReadText $pf '0').Split(' ', 2)
+    if ([int64]$u -gt (Now)) { Say ($P + ' is paused until ' + (Fmt $u) + ': ' + $r); exit 11 }
+  }
 }
 
 if (@('open', 'scroll', 'pace') -contains $Sub) { $Kind = 'request' }

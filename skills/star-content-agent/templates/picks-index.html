@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>往期 · 收藏回来找你了</title>
+<!--
+  往期目录页模板（给 Agent 看）。复制成 <数据目录>/picks/index.html。
+  每次交付后，在 ul.days 的最前面加一行新的 li；标题文字要转义（& < > "）。
+-->
+<style>
+  :root { --bg: #f6f5f2; --card: #ffffff; --ink: #1b1b1f; --sub: #6b6b73; --line: #e7e5e0; --accent: #7a5cfa; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #141417; --card: #1d1d22; --ink: #ececf1; --sub: #9a9aa5; --line: #2e2e35; --accent: #a98bff; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.7 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 44px 20px 72px; }
+  h1 { font-size: 28px; margin: 0 0 18px; }
+  .days { list-style: none; margin: 0; padding: 0; }
+  .days li { margin: 10px 0; }
+  .days a { display: block; padding: 14px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: inherit; }
+  .days a:hover { border-color: var(--accent); }
+  .days b { display: block; }
+  .days span { color: var(--sub); font-size: 14px; }
+  footer { margin-top: 40px; color: var(--sub); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+<h1>往期 · 收藏回来找你了</h1>
+<ul class="days">
+  <!-- 新的一天加在最前面 -->
+  <li><a href="{{年-月-日}}.html"><b>{{月}}月{{日}}日</b><span>{{关联栏那句话}} · {{今天就用那句话}}</span></a></li>
+</ul>
+<footer>这些文件只存在你的电脑上。</footer>
+</main>
+</body>
+</html>

@@ -6,6 +6,8 @@
 - **今天就用**：挑一条 30 分钟内能照着做的；
 - **值得想起**：翻出一条你早忘了的旧收藏。
 
+每天交付一个本地的小网页：每条都能点开原帖；每一栏都会告诉你为什么挑它；「今天就用」的步骤可以逐条打勾。
+
 来自阿舟的视频《先别收藏》。
 
 ## 怎么装
@@ -76,6 +78,7 @@
 | `skills/star-content-agent/library.md` | 数据目录、状态文件、收藏库字段 |
 | `skills/star-content-agent/pick.md` | 挑选，包括视频里那段提示词 |
 | `skills/star-content-agent/gate.sh`、`gate.ps1`、`js/` | 门卫和它允许运行的页面脚本 |
+| `skills/star-content-agent/templates/` | 每天交付的样子：单页网页模板（填一段数据就能渲染）、往期目录、Markdown 模板 |
 | `收藏助手-安装包.md` | 上面所有文件打成的一个文件，带 sha256 核对表 |
 | `build_bundle.py` | 改了 `skills/star-content-agent/` 以后，用它重新生成安装包 |
 
