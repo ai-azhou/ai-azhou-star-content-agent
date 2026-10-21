@@ -70,6 +70,7 @@
    | `greeting` | 开场一句（见第五节） |
    | `stats` | `total` 收藏库里一共几条，`read` 读过内容的几条，`new_today` 这次新收藏几条，`picked` 这一份用到几条。都用脚本数出来，不要估 |
    | `todo` | 需要用户做的一件事，没有就空着 |
+   | `notice` | 默认规则被触发时（见 SKILL.md「默认规则被触发时」）的说明和选项：`title`（一句话说发生了什么）、`detail`（默认做了什么、对今天的影响）、`choices[]`（每项 `text`，推荐的那项加 `"recommended": true`）、`how_to_answer`（比如「下次打开我的时候，回一个字母就行」）。没有就省掉或留空 |
    | `relate.title` | 这几条共同讲的道理，一句话 |
    | `relate.why` | 为什么能串起来 |
    | `relate.items[]` | 每条一项：`title`、`url`、`author`、`type`（图文 / 视频）、`summary`（讲了什么）、`role`（它在这个道理里扮演什么角色）、`quote`（原话）、`quote_from`（出处：正文 / 图 2 / 视频 01:23） |

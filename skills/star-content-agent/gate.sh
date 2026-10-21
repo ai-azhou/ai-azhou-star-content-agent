@@ -5,7 +5,7 @@
 #
 #   gate.sh <平台> <browser 子命令> [参数...]   例：gate.sh xhs open "https://..." --session sca-fav
 #   gate.sh <平台> pace                          只等够请求间隔并记一次请求（点开会加载新内容的标签前用）
-#   gate.sh pause <平台> <原因>                  碰到风控：暂停这个平台 20 小时
+#   gate.sh pause <平台> [--hours N] <原因>      碰到风控：暂停这个平台，默认 20 小时；用户选了别的时间就用 --hours（至少 1）
 #   gate.sh unpause <平台>                       用户明确要求时才用
 #   gate.sh lock <run_id> [--take-stale] | unlock <run_id> | status
 #
@@ -27,7 +27,7 @@ MAX_WAIT=$(cat "$G/max-wait" 2>/dev/null || echo 55)   # 单次调用最多等�
 now() { date +%s; }
 say() { echo "[gate] $*" >&2; }
 log() { echo "$(date '+%Y-%m-%dT%H:%M:%S%z') $*" >> "$DATA/requests.log"; }
-usage() { sed -n '4,9p' "$0" >&2; exit 14; }
+usage() { sed -n '6,13p' "$0" >&2; exit 14; }
 fmt() { date -r "$1" '+%m-%d %H:%M' 2>/dev/null || date -d "@$1" '+%m-%d %H:%M'; }
 
 [ $# -ge 1 ] || usage
@@ -51,9 +51,16 @@ case "$1" in
     say "锁不属于 $2（现在是：${owner:-没有锁}）"; exit 14 ;;
   pause)
     [ $# -ge 3 ] || usage
-    until_ts=$(( $(now) + PAUSE_HOURS * 3600 ))
-    echo "$until_ts ${*:3}" > "$G/pause.$2"
-    log "$2 pause ${*:3}"; say "$2 暂停到 $(fmt "$until_ts")"; exit 0 ;;
+    plat=$2; shift 2; hours=$PAUSE_HOURS
+    if [ "${1:-}" = "--hours" ]; then
+      hours=${2:-}; shift 2 || usage
+      case "$hours" in ""|*[!0-9]*) say "--hours 要写整数小时"; exit 14 ;; esac
+      [ "$hours" -ge 1 ] || { say "碰到风控以后，最早也要 1 小时后再试"; exit 14; }
+    fi
+    [ $# -ge 1 ] || usage
+    until_ts=$(( $(now) + hours * 3600 ))
+    echo "$until_ts $*" > "$G/pause.$plat"
+    log "$plat pause ${hours}h $*"; say "$plat 暂停到 $(fmt "$until_ts")"; exit 0 ;;
   unpause)
     [ $# -ge 2 ] || usage
     rm -f "$G/pause.$2"; log "$2 unpause"; say "$2 已解除暂停"; exit 0 ;;

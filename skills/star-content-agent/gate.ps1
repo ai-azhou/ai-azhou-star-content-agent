@@ -4,7 +4,7 @@
 # Call it like this:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File "<data dir>\skill\gate.ps1" <platform> <subcommand> [args...]
 #   e.g. ... gate.ps1 xhs open "https://..." --session sca-fav
-#   ... gate.ps1 <platform> pace | pause <platform> <reason> | unpause <platform> | lock <run_id> [--take-stale] | unlock <run_id> | status
+#   ... gate.ps1 <platform> pace | pause <platform> [--hours N] <reason> | unpause <platform> | lock <run_id> [--take-stale] | unlock <run_id> | status
 # Exit codes: 0 ok; 10 STOP file present; 11 platform paused; 12 daily request cap reached; 13 not allowed;
 #             14 usage error; 15 another run holds the lock; 16 still waiting: run the exact same command again
 # NOTE: not yet run on a real Windows machine. If the self-test in setup.md fails, fix this file
@@ -51,8 +51,14 @@ if ($A[0] -eq 'unlock') {
 }
 if ($A[0] -eq 'pause') {
   if ($A.Count -lt 3) { exit 14 }
-  $until = (Now) + $PauseHours * 3600
-  $reason = ($A[2..($A.Count - 1)] -join ' ')
+  $hours = $PauseHours; $from = 2
+  if ($A[2] -eq '--hours') {
+    if ($A.Count -lt 5 -or [string]$A[3] -notmatch '^[0-9]+$') { Say '--hours needs a whole number of hours, then a reason'; exit 14 }
+    $hours = [int]$A[3]; $from = 4
+    if ($hours -lt 1) { Say 'after a risk signal, wait at least 1 hour'; exit 14 }
+  }
+  $until = (Now) + $hours * 3600
+  $reason = ($A[$from..($A.Count - 1)] -join ' ')
   WriteText (Join-Path $G ('pause.' + $A[1])) ([string]$until + ' ' + $reason)
   Log ($A[1] + ' pause ' + $reason); Say ($A[1] + ' paused until ' + (Fmt $until)); exit 0
 }

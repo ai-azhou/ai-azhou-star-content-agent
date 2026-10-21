@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "skill_version": "2026-10-21-v2.3",
+  "skill_version": "2026-10-21-v2.4",
   "data_dir": "",
   "skill_dir": "",
   "install_method": "",
@@ -32,6 +32,7 @@
   },
   "schedule": { "method": "", "id": "", "command": "", "verified_at": "" },
   "paused_until": "",
+  "pending_questions": [],
   "last_run": { "run_id": "", "date": "", "result": "" },
   "last_delivery": { "date": "", "file": "" }
 }

@@ -42,6 +42,13 @@
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .chip { font-size: 13px; padding: 3px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--sub); }
   .chip b { color: var(--ink); font-weight: 700; }
+  .notice { margin: 16px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--todo-line); }
+  .notice b.t { display: block; font-size: 16px; }
+  .notice p { margin: 4px 0; }
+  .notice ol { margin: 8px 0 4px; padding-left: 1.5em; }
+  .notice li { margin: 2px 0; }
+  .notice .rec { display: inline-block; margin-left: 6px; font-size: 12px; padding: 0 8px; border-radius: 999px; background: var(--todo-bg); color: var(--todo-ink); }
+  .notice .how { font-size: 13px; color: var(--sub); }
   .todo { margin: 16px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--todo-bg); color: var(--todo-ink); border: 1px solid var(--todo-line); }
 
   nav.jump { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; padding: 12px 0; margin-top: 8px; background: var(--bg); }
@@ -99,6 +106,7 @@
     <p class="greeting" id="greeting"></p>
     <div class="chips" id="chips"></div>
     <div class="todo" id="todo" hidden></div>
+    <div class="notice" id="notice" hidden></div>
   </div>
   <nav class="jump"><a href="#rel">关联</a><a href="#use">今天就用</a><a href="#mem">值得想起</a></nav>
 
@@ -173,6 +181,22 @@ document.addEventListener('DOMContentLoaded', function () {
     var s = el('span', 'chip'); s.appendChild(document.createTextNode(c[0] + ' ')); s.appendChild(el('b', null, String(c[1]))); s.appendChild(document.createTextNode(' ' + c[2])); chips.appendChild(s);
   });
   setText('todo', D.todo ? '需要你做的一件事：' + D.todo : '');
+  var N = D.notice || {};
+  if (N.title || N.detail || (N.choices || []).length) {
+    var nb = $('notice'); nb.hidden = false;
+    nb.appendChild(el('b', 't', '今天的情况：' + (N.title || '')));
+    if (N.detail) nb.appendChild(el('p', null, N.detail));
+    if ((N.choices || []).length) {
+      var ol = el('ol');
+      N.choices.forEach(function (c) {
+        var li = el('li', null, typeof c === 'string' ? c : (c.text || ''));
+        if (c && c.recommended) li.appendChild(el('span', 'rec', '推荐'));
+        ol.appendChild(li);
+      });
+      nb.appendChild(ol);
+    }
+    if (N.how_to_answer) nb.appendChild(el('p', 'how', N.how_to_answer));
+  }
 
   // 关联
   var R = D.relate || {};
@@ -250,6 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
   "greeting": "开场一句：用今天挑出的内容说一个具体的发现。",
   "stats": { "total": 0, "read": 0, "new_today": 0, "picked": 0 },
   "todo": "",
+  "notice": { "title": "", "detail": "", "choices": [], "how_to_answer": "" },
   "relate": {
     "title": "这几条共同讲的道理，一句话",
     "why": "为什么这几条能串起来：落在它们共同的机制上，不是表面关键词。",
